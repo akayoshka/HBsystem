@@ -1,0 +1,63 @@
+{
+	"id": "4889cff9-d5e9-4023-bf8e-72843f5ccc83",
+	"name": "HealthBooker Environment",
+	"values": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:5000/api",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "test_user_id",
+			"value": "",
+			"type": "any",
+			"enabled": true
+		},
+		{
+			"key": "test_doctor_id",
+			"value": "",
+			"type": "any",
+			"enabled": true
+		},
+		{
+			"key": "user_token",
+			"value": "",
+			"type": "any",
+			"enabled": true
+		},
+		{
+			"key": "application_user_id",
+			"value": "",
+			"type": "any",
+			"enabled": true
+		},
+		{
+			"key": "appointment_id",
+			"value": "",
+			"type": "any",
+			"enabled": true
+		},
+		{
+			"key": "notification_id",
+			"value": "",
+			"type": "any",
+			"enabled": true
+		},
+		{
+			"key": "notifications_count",
+			"value": "",
+			"type": "any",
+			"enabled": true
+		}
+	],
+	"_postman_variable_scope": "environment",
+	"_postman_exported_at": "2025-04-28T15:57:33.975Z",
+	"_postman_exported_using": "Postman/11.42.1"
+}

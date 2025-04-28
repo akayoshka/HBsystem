@@ -1,0 +1,2341 @@
+{
+	"info": {
+		"_postman_id": "564a6de7-19f7-47d9-9ace-e7f81904223a",
+		"name": "HealthBooker API Tests",
+		"description": "A collection for testing the HealthBooker project's API. It includes tests for authentication, user management, doctors, appointment bookings, and notifications, as well as security checks and error handling.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "44018736",
+		"_collection_link": "https://eugene-496302.postman.co/workspace/5e172d83-2fef-4abd-93c3-3aa47c4e3a4e/collection/44018736-564a6de7-19f7-47d9-9ace-e7f81904223a?action=share&source=collection_link&creator=44018736"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check if the request was successful\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Parse the response body\r",
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"// Check if token exists in the response\r",
+									"pm.test(\"Response contains token\", function () {\r",
+									"    pm.expect(jsonData.token).to.exist;\r",
+									"});\r",
+									"\r",
+									"// Save the token to environment variable\r",
+									"if (jsonData.token) {\r",
+									"    pm.environment.set(\"token\", jsonData.token);\r",
+									"    console.log(\"Token saved to environment variable\");\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"admin@example.com\",\r\n    \"password\": \"password123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login as Test User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check if the request was successful\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Parse the response body\r",
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"// Save the user token to environment variable\r",
+									"if (jsonData.token) {\r",
+									"    pm.environment.set(\"user_token\", jsonData.token);\r",
+									"    console.log(\"User token saved to environment variable\");\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"testuser@example.com\",\r\n    \"password\": \"password123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Current User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check if the request was successful\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Parse the response body\r",
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"// Check if user data exists in the response\r",
+									"pm.test(\"Response contains user data\", function () {\r",
+									"    pm.expect(jsonData.data.user).to.exist;\r",
+									"});\r",
+									"\r",
+									"// Check if the user is admin\r",
+									"pm.test(\"User is admin\", function () {\r",
+									"    pm.expect(jsonData.data.user.isAdmin).to.be.true;\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/auth/me",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"me"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register New User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check if the request was successful\r",
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"// Parse the response body\r",
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"// Check if the response indicates success\r",
+									"pm.test(\"Registration successful\", function () {\r",
+									"    pm.expect(jsonData.status).to.equal(\"success\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"firstname\": \"Test\",\r\n    \"lastname\": \"User\",\r\n    \"email\": \"testuser@example.com\",\r\n    \"password\": \"password123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/register",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register With Invalid Email",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check if the request was rejected with bad request status\r",
+									"pm.test(\"Status code is 400 Bad Request\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"// Parse the response body\r",
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"// Check if the response indicates validation error\r",
+									"pm.test(\"Response indicates validation error\", function () {\r",
+									"    pm.expect(jsonData.status).to.equal(\"error\");\r",
+									"});\r",
+									"\r",
+									"// Check if the error message relates to email format\r",
+									"pm.test(\"Error message relates to email format\", function () {\r",
+									"    pm.expect(jsonData.errors).to.be.an('array');\r",
+									"    var hasEmailError = jsonData.errors.some(error => \r",
+									"        error.field === \"email\"\r",
+									"    );\r",
+									"    pm.expect(hasEmailError).to.be.true;\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"firstname\": \"Invalid\",\r\n    \"lastname\": \"Email\",\r\n    \"email\": \"invalid-email\",\r\n    \"password\": \"password123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/register",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register With Short Password",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check if the request was rejected with bad request status\r",
+									"pm.test(\"Status code is 400 Bad Request\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"// Parse the response body\r",
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"// Check if the response indicates validation error\r",
+									"pm.test(\"Response indicates validation error\", function () {\r",
+									"    pm.expect(jsonData.status).to.equal(\"error\");\r",
+									"});\r",
+									"\r",
+									"// Check if the error message relates to password length\r",
+									"pm.test(\"Error message relates to password length\", function () {\r",
+									"    pm.expect(jsonData.errors).to.be.an('array');\r",
+									"    var hasPasswordError = jsonData.errors.some(error => \r",
+									"        error.field === \"password\"\r",
+									"    );\r",
+									"    pm.expect(hasPasswordError).to.be.true;\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"firstname\": \"Short\",\r\n    \"lastname\": \"Password\",\r\n    \"email\": \"short@example.com\",\r\n    \"password\": \"123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/register",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login With Invalid Credentials",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check if the request was unauthorized\r",
+									"pm.test(\"Status code is 401 Unauthorized\", function () {\r",
+									"    pm.response.to.have.status(401);\r",
+									"});\r",
+									"\r",
+									"// Parse the response body\r",
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"// Check if the response indicates invalid credentials\r",
+									"pm.test(\"Response indicates invalid credentials\", function () {\r",
+									"    pm.expect(jsonData.status).to.equal(\"error\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"admin@example.com\",\r\n    \"password\": \"wrongpassword\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Get All Users",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check if the request was successful\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Parse the response body\r",
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"// Check if users array exists in the response\r",
+									"pm.test(\"Response contains users array\", function () {\r",
+									"    pm.expect(jsonData.data.users).to.be.an('array');\r",
+									"});\r",
+									"\r",
+									"// Save the first non-admin user ID for later tests\r",
+									"if (jsonData.data.users && jsonData.data.users.length > 0) {\r",
+									"    // Find a non-admin user\r",
+									"    var nonAdminUser = jsonData.data.users.find(user => !user.isAdmin);\r",
+									"    if (nonAdminUser) {\r",
+									"        pm.environment.set(\"test_user_id\", nonAdminUser.id);\r",
+									"        console.log(\"Non-admin user ID saved: \" + nonAdminUser.id);\r",
+									"    }\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/user/getallusers",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user",
+								"getallusers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User by ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check if the request was successful\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Parse the response body\r",
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"// Check if user data exists in the response\r",
+									"pm.test(\"Response contains user data\", function () {\r",
+									"    pm.expect(jsonData.data.user).to.exist;\r",
+									"});\r",
+									"\r",
+									"// Check if the returned user has the correct ID\r",
+									"pm.test(\"User has correct ID\", function () {\r",
+									"    pm.expect(jsonData.data.user.id.toString()).to.equal(pm.environment.get(\"test_user_id\"));\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/user/getuser/{{test_user_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user",
+								"getuser",
+								"{{test_user_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Non-existent User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check if the request was rejected with not found status\r",
+									"pm.test(\"Status code is 404 Not Found\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"\r",
+									"// Parse the response body\r",
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"// Check if the response indicates resource not found\r",
+									"pm.test(\"Response indicates resource not found\", function () {\r",
+									"    pm.expect(jsonData.status).to.equal(\"error\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/user/getuser/99999",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user",
+								"getuser",
+								"99999"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Access Other User Profile With User Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check if the request was forbidden\r",
+									"pm.test(\"Status code is 403 Forbidden\", function () {\r",
+									"    pm.response.to.have.status(403);\r",
+									"});\r",
+									"\r",
+									"// Parse the response body\r",
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"// Check if the response indicates forbidden access\r",
+									"pm.test(\"Response indicates forbidden access\", function () {\r",
+									"    pm.expect(jsonData.status).to.equal(\"error\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{user_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/user/getuser/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user",
+								"getuser",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Other User With User Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check if the request was forbidden\r",
+									"pm.test(\"Status code is 403 Forbidden\", function () {\r",
+									"    pm.response.to.have.status(403);\r",
+									"});\r",
+									"\r",
+									"// Parse the response body\r",
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"// Check if the response indicates forbidden access\r",
+									"pm.test(\"Response indicates forbidden access\", function () {\r",
+									"    pm.expect(jsonData.status).to.equal(\"error\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{user_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userId\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/user/deleteuser",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user",
+								"deleteuser"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Doctors",
+			"item": [
+				{
+					"name": "Get All Doctors",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check if the request was successful\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Parse the response body\r",
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"// Check if doctors array exists in the response\r",
+									"pm.test(\"Response contains doctors array\", function () {\r",
+									"    pm.expect(jsonData.data.doctors).to.be.an('array');\r",
+									"});\r",
+									"\r",
+									"// Save the first doctor ID for later tests if any exists\r",
+									"if (jsonData.data.doctors && jsonData.data.doctors.length > 0) {\r",
+									"    pm.environment.set(\"test_doctor_id\", jsonData.data.doctors[0].id);\r",
+									"    console.log(\"Doctor ID saved: \" + jsonData.data.doctors[0].id);\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/doctor/getalldoctors",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"doctor",
+								"getalldoctors"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Doctor by ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check if the request was successful\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Parse the response body\r",
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"// Check if doctor data exists in the response\r",
+									"pm.test(\"Response contains doctor data\", function () {\r",
+									"    pm.expect(jsonData.data.doctor).to.exist;\r",
+									"});\r",
+									"\r",
+									"// Check if the returned doctor has the correct ID\r",
+									"pm.test(\"Doctor has correct ID\", function () {\r",
+									"    pm.expect(jsonData.data.doctor.id.toString()).to.equal(pm.environment.get(\"test_doctor_id\"));\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/doctor/getdoctor/{{test_doctor_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"doctor",
+								"getdoctor",
+								"{{test_doctor_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Apply for Doctor",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check if the request was successful\r",
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"// Parse the response body\r",
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"// Check if the response indicates success\r",
+									"pm.test(\"Application submitted successfully\", function () {\r",
+									"    pm.expect(jsonData.status).to.equal(\"success\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{user_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"specialization\": \"Cardiology\",\r\n    \"experience\": 5,\r\n    \"fees\": 150\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/doctor/applyfordoctor",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"doctor",
+								"applyfordoctor"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Doctor Applications",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check if the request was successful\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Parse the response body\r",
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"// Check if applications array exists in the response\r",
+									"pm.test(\"Response contains applications array\", function () {\r",
+									"    pm.expect(jsonData.data.applications).to.be.an('array');\r",
+									"});\r",
+									"\r",
+									"// Save the application user ID for later tests if any exists\r",
+									"if (jsonData.data.applications && jsonData.data.applications.length > 0) {\r",
+									"    // Find our test user's application\r",
+									"    var testUserApp = jsonData.data.applications.find(app => \r",
+									"        app.user && app.user.email === \"testuser@example.com\"\r",
+									"    );\r",
+									"    \r",
+									"    if (testUserApp) {\r",
+									"        pm.environment.set(\"application_user_id\", testUserApp.userId);\r",
+									"        console.log(\"Application user ID saved: \" + testUserApp.userId);\r",
+									"    }\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/doctor/getnotdoctors",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"doctor",
+								"getnotdoctors"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Accept Doctor Application",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check if the request was successful\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Parse the response body\r",
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"// Check if the response indicates success\r",
+									"pm.test(\"Application accepted successfully\", function () {\r",
+									"    pm.expect(jsonData.status).to.equal(\"success\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": {{application_user_id}}\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/doctor/acceptdoctor",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"doctor",
+								"acceptdoctor"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Apply for Doctor With Negative Experience",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check if the request was rejected with bad request status\r",
+									"pm.test(\"Status code is 400 Bad Request\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"// Parse the response body\r",
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"// Check if the response indicates validation error\r",
+									"pm.test(\"Response indicates validation error\", function () {\r",
+									"    pm.expect(jsonData.status).to.equal(\"error\");\r",
+									"});\r",
+									"\r",
+									"// Check if there are validation errors for negative experience\r",
+									"pm.test(\"Validation errors for negative experience exist\", function () {\r",
+									"    pm.expect(jsonData.errors).to.be.an('array');\r",
+									"    var hasExperienceError = jsonData.errors.some(error => \r",
+									"        error.field === \"experience\"\r",
+									"    );\r",
+									"    pm.expect(hasExperienceError).to.be.true;\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{user_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"specialization\": \"Cardiology\",\r\n    \"experience\": -5,\r\n    \"fees\": 150\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/doctor/applyfordoctor",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"doctor",
+								"applyfordoctor"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Accept Doctor Application With User Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check if the request was forbidden\r",
+									"pm.test(\"Status code is 403 Forbidden\", function () {\r",
+									"    pm.response.to.have.status(403);\r",
+									"});\r",
+									"\r",
+									"// Parse the response body\r",
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"// Check if the response indicates forbidden access\r",
+									"pm.test(\"Response indicates forbidden access\", function () {\r",
+									"    pm.expect(jsonData.status).to.equal(\"error\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{user_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/doctor/acceptdoctor",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"doctor",
+								"acceptdoctor"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Verify New Doctor in List",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check if the request was successful\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Parse the response body\r",
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"// Check if doctors array exists in the response\r",
+									"pm.test(\"Response contains doctors array\", function () {\r",
+									"    pm.expect(jsonData.data.doctors).to.be.an('array');\r",
+									"});\r",
+									"\r",
+									"// Get the ID of the user who was approved as doctor\r",
+									"var applicantId = pm.collectionVariables.get(\"application_user_id\") || pm.environment.get(\"application_user_id\") || pm.environment.get(\"test_user_id\");\r",
+									"\r",
+									"// Check if new doctor exists in the list\r",
+									"pm.test(\"New doctor exists in the list\", function () {\r",
+									"    var doctorExists = false;\r",
+									"    \r",
+									"    if (jsonData.data && jsonData.data.doctors) {\r",
+									"        doctorExists = jsonData.data.doctors.some(doctor => \r",
+									"            doctor.userId.toString() === applicantId\r",
+									"        );\r",
+									"    }\r",
+									"    \r",
+									"    pm.expect(doctorExists).to.be.true;\r",
+									"});\r",
+									"\r",
+									"// Find the new doctor in the list\r",
+									"var newDoctor = null;\r",
+									"if (jsonData.data && jsonData.data.doctors) {\r",
+									"    newDoctor = jsonData.data.doctors.find(doctor => \r",
+									"        doctor.userId.toString() === applicantId\r",
+									"    );\r",
+									"}\r",
+									"\r",
+									"// Check doctor details if found\r",
+									"if (newDoctor) {\r",
+									"    pm.test(\"Doctor specialization is correct\", function () {\r",
+									"        pm.expect(newDoctor.specialization).to.exist;\r",
+									"    });\r",
+									"    \r",
+									"    pm.test(\"Doctor experience is set\", function () {\r",
+									"        pm.expect(newDoctor.experience).to.exist;\r",
+									"        pm.expect(newDoctor.experience).to.be.a('number');\r",
+									"    });\r",
+									"    \r",
+									"    pm.test(\"Doctor fees are set\", function () {\r",
+									"        pm.expect(newDoctor.fees).to.exist;\r",
+									"        pm.expect(newDoctor.fees).to.be.a('number');\r",
+									"    });\r",
+									"    \r",
+									"    // Store the new doctor ID if needed for future tests\r",
+									"    pm.environment.set(\"test_doctor_id\", newDoctor.id);\r",
+									"    console.log(\"New doctor ID saved: \" + newDoctor.id);\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/doctor/getalldoctors",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"doctor",
+								"getalldoctors"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Appointments",
+			"item": [
+				{
+					"name": "Book Appointment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check if the request was successful\r",
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"// Parse the response body\r",
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"// Check if the response indicates success\r",
+									"pm.test(\"Appointment booked successfully\", function () {\r",
+									"    pm.expect(jsonData.status).to.equal(\"success\");\r",
+									"});\r",
+									"\r",
+									"// Save the appointment ID for later tests\r",
+									"if (jsonData.data && jsonData.data.appointment && jsonData.data.appointment.id) {\r",
+									"    pm.environment.set(\"appointment_id\", jsonData.data.appointment.id);\r",
+									"    console.log(\"Appointment ID saved: \" + jsonData.data.appointment.id);\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{user_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"doctorId\": {{application_user_id}},\r\n    \"date\": \"2025-05-15\",\r\n    \"time\": \"10:00\",\r\n    \"doctorname\": \"Test User\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/appointment/bookappointment",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"appointment",
+								"bookappointment"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Appointments",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check if the request was successful\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Parse the response body\r",
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"// Check if appointments array exists in the response\r",
+									"pm.test(\"Response contains appointments array\", function () {\r",
+									"    pm.expect(jsonData.data.appointments).to.be.an('array');\r",
+									"});\r",
+									"\r",
+									"// Check if our created appointment exists in the list\r",
+									"pm.test(\"Created appointment exists in the list\", function () {\r",
+									"    var appointmentId = pm.environment.get(\"appointment_id\");\r",
+									"    var found = jsonData.data.appointments.some(appointment => \r",
+									"        appointment.id.toString() === appointmentId\r",
+									"    );\r",
+									"    pm.expect(found).to.be.true;\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/appointment/getallappointments",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"appointment",
+								"getallappointments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Filter Appointments by Date",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check if the request was successful\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Parse the response body\r",
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"// Check if appointments array exists in the response\r",
+									"pm.test(\"Response contains appointments array\", function () {\r",
+									"    pm.expect(jsonData.data.appointments).to.be.an('array');\r",
+									"});\r",
+									"\r",
+									"// Check that all appointments in the response have the correct date\r",
+									"pm.test(\"All appointments have the correct date\", function () {\r",
+									"    var allCorrectDate = jsonData.data.appointments.every(appointment => \r",
+									"        appointment.date === \"2025-05-15\"\r",
+									"    );\r",
+									"    pm.expect(allCorrectDate).to.be.true;\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/appointment/getallappointments?date=2025-05-15",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"appointment",
+								"getallappointments"
+							],
+							"query": [
+								{
+									"key": "date",
+									"value": "2025-05-15"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Filter Appointments by Status",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check if the request was successful\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Parse the response body\r",
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"// Check if appointments array exists in the response\r",
+									"pm.test(\"Response contains appointments array\", function () {\r",
+									"    pm.expect(jsonData.data.appointments).to.be.an('array');\r",
+									"});\r",
+									"\r",
+									"// Check that all appointments in the response have the status \"Completed\"\r",
+									"pm.test(\"All appointments have the status Completed\", function () {\r",
+									"    var allCompleted = jsonData.data.appointments.every(appointment => \r",
+									"        appointment.status === \"Completed\"\r",
+									"    );\r",
+									"    pm.expect(allCompleted).to.be.true;\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/appointment/getallappointments?status=Completed",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"appointment",
+								"getallappointments"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "Completed"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Complete Appointment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check if the request was successful\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Parse the response body\r",
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"// Check if the response indicates success\r",
+									"pm.test(\"Appointment completed successfully\", function () {\r",
+									"    pm.expect(jsonData.status).to.equal(\"success\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"appointid\": {{appointment_id}},\r\n    \"doctorId\": {{application_user_id}},\r\n    \"doctorname\": \"Test User\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/appointment/completed",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"appointment",
+								"completed"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Book Appointment With Missing Data",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check if the request was rejected with bad request status\r",
+									"pm.test(\"Status code is 400 Bad Request\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"// Parse the response body\r",
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"// Check if the response indicates validation error\r",
+									"pm.test(\"Response indicates validation error\", function () {\r",
+									"    pm.expect(jsonData.status).to.equal(\"error\");\r",
+									"});\r",
+									"\r",
+									"// Check if there are validation errors for missing fields\r",
+									"pm.test(\"Validation errors for missing fields exist\", function () {\r",
+									"    pm.expect(jsonData.errors).to.be.an('array');\r",
+									"    var hasDateError = jsonData.errors.some(error => \r",
+									"        error.field === \"date\"\r",
+									"    );\r",
+									"    var hasTimeError = jsonData.errors.some(error => \r",
+									"        error.field === \"time\"\r",
+									"    );\r",
+									"    pm.expect(hasDateError || hasTimeError).to.be.true;\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{user_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"doctorId\": {{application_user_id}}\r\n    // Отсутствуют обязательные поля date и time\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/appointment/bookappointment",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"appointment",
+								"bookappointment"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Book Appointment With Invalid Date Format",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check if the request was rejected with bad request status\r",
+									"pm.test(\"Status code is 400 Bad Request\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"// Parse the response body\r",
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"// Check if the response indicates validation error\r",
+									"pm.test(\"Response indicates validation error\", function () {\r",
+									"    pm.expect(jsonData.status).to.equal(\"error\");\r",
+									"});\r",
+									"\r",
+									"// Check if there are validation errors for date format\r",
+									"pm.test(\"Validation errors for date format exist\", function () {\r",
+									"    pm.expect(jsonData.errors).to.be.an('array');\r",
+									"    var hasDateError = jsonData.errors.some(error => \r",
+									"        error.field === \"date\"\r",
+									"    );\r",
+									"    pm.expect(hasDateError).to.be.true;\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{user_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"doctorId\": {{application_user_id}},\r\n    \"date\": \"invalid-date\",\r\n    \"time\": \"10:00\",\r\n    \"doctorname\": \"Test User\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/appointment/bookappointment",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"appointment",
+								"bookappointment"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Notifications",
+			"item": [
+				{
+					"name": "Get User Notifications",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check if the request was successful\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Parse the response body\r",
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"// Check if notifications array exists in the response\r",
+									"pm.test(\"Response contains notifications array\", function () {\r",
+									"    pm.expect(jsonData.data.notifications).to.be.an('array');\r",
+									"});\r",
+									"\r",
+									"// Check if there are notifications related to appointments\r",
+									"pm.test(\"There are notifications related to appointments\", function () {\r",
+									"    var hasAppointmentNotification = jsonData.data.notifications.some(notification => \r",
+									"        notification.content.includes(\"прием\") || \r",
+									"        notification.content.includes(\"appointment\")\r",
+									"    );\r",
+									"    pm.expect(hasAppointmentNotification).to.be.true;\r",
+									"});\r",
+									"\r",
+									"// Save a notification ID for later tests\r",
+									"if (jsonData.data.notifications && jsonData.data.notifications.length > 0) {\r",
+									"    pm.environment.set(\"notification_id\", jsonData.data.notifications[0].id);\r",
+									"    console.log(\"Notification ID saved: \" + jsonData.data.notifications[0].id);\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{user_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/notification/getallnotifs",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"notification",
+								"getallnotifs"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User Notifications Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check if the request was successful\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Parse the response body\r",
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"// Check if notifications array exists in the response\r",
+									"pm.test(\"Response contains notifications array\", function () {\r",
+									"    pm.expect(jsonData.data.notifications).to.be.an('array');\r",
+									"});\r",
+									"\r",
+									"// Check if there are any notifications\r",
+									"pm.test(\"User has notifications\", function () {\r",
+									"    pm.expect(jsonData.data.notifications.length).to.be.greaterThan(0);\r",
+									"});\r",
+									"\r",
+									"// Check for the test notification created by admin\r",
+									"// The message should contain \"тестовое уведомление от администратора\"\r",
+									"pm.test(\"Admin notification exists\", function () {\r",
+									"    var hasAdminNotification = false;\r",
+									"    if (jsonData.data.notifications && jsonData.data.notifications.length > 0) {\r",
+									"        hasAdminNotification = jsonData.data.notifications.some(notification => \r",
+									"            notification.content.includes(\"тестовое уведомление\") || \r",
+									"            notification.content.includes(\"test notification\")\r",
+									"        );\r",
+									"    }\r",
+									"    pm.expect(hasAdminNotification).to.be.true;\r",
+									"});\r",
+									"\r",
+									"// Get the first notification for later use\r",
+									"if (jsonData.data.notifications && jsonData.data.notifications.length > 0) {\r",
+									"    const latestNotification = jsonData.data.notifications[0];\r",
+									"    \r",
+									"    // Log the latest notification content\r",
+									"    console.log(\"Latest notification content: \" + latestNotification.content);\r",
+									"    \r",
+									"    // Check if it's unread\r",
+									"    pm.test(\"Latest notification read status\", function () {\r",
+									"        // Logging read status to understand the state\r",
+									"        console.log(\"Is notification read: \" + latestNotification.isRead);\r",
+									"    });\r",
+									"    \r",
+									"    // Save this notification ID if needed for later tests\r",
+									"    pm.environment.set(\"notification_id\", latestNotification.id);\r",
+									"    console.log(\"Notification ID saved: \" + latestNotification.id);\r",
+									"}\r",
+									"\r",
+									"// Save the count of notifications for comparison in later tests\r",
+									"pm.environment.set(\"notifications_count\", jsonData.data.notifications.length);\r",
+									"console.log(\"Total notifications count: \" + jsonData.data.notifications.length);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{user_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/notification/getallnotifs",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"notification",
+								"getallnotifs"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Mark Notification as Read",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check if the request was successful\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Parse the response body\r",
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"// Check if the response indicates success\r",
+									"pm.test(\"Notification marked as read successfully\", function () {\r",
+									"    pm.expect(jsonData.status).to.equal(\"success\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{user_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"notificationId\": {{notification_id}}\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/notification/markasread",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"notification",
+								"markasread"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Unread Notifications Count",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check if the request was successful\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Parse the response body\r",
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"// Check if the response contains unread count\r",
+									"pm.test(\"Response contains unread count\", function () {\r",
+									"    pm.expect(jsonData.data.unreadCount).to.exist;\r",
+									"    pm.expect(jsonData.data.unreadCount).to.be.a('number');\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{user_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/notification/unread/count",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"notification",
+								"unread",
+								"count"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Mark All Notifications as Read",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check if the request was successful\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Parse the response body\r",
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"// Check if the response indicates success\r",
+									"pm.test(\"All notifications marked as read successfully\", function () {\r",
+									"    pm.expect(jsonData.status).to.equal(\"success\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{user_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/notification/markallasread",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"notification",
+								"markallasread"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Notification",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check if the request was successful\r",
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"// Parse the response body\r",
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"// Check if the response indicates success\r",
+									"pm.test(\"Notification created successfully\", function () {\r",
+									"    pm.expect(jsonData.status).to.equal(\"success\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userId\": {{test_user_id}},\r\n    \"content\": \"Это тестовое уведомление от администратора\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/notification",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"notification"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Read Notifications",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check if the request was successful\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Parse the response body\r",
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"// Check if the response indicates success\r",
+									"pm.test(\"Read notifications deleted successfully\", function () {\r",
+									"    pm.expect(jsonData.status).to.equal(\"success\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{user_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/notification/deleteread",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"notification",
+								"deleteread"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Mark Non-existent Notification as Read",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check if the request was rejected with not found status\r",
+									"pm.test(\"Status code is 404 Not Found\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"\r",
+									"// Parse the response body\r",
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"// Check if the response indicates resource not found\r",
+									"pm.test(\"Response indicates resource not found\", function () {\r",
+									"    pm.expect(jsonData.status).to.equal(\"error\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{user_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"notificationId\": 99999\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/notification/markasread",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"notification",
+								"markasread"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Notification With User Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check if the request was forbidden\r",
+									"pm.test(\"Status code is 403 Forbidden\", function () {\r",
+									"    pm.response.to.have.status(403);\r",
+									"});\r",
+									"\r",
+									"// Parse the response body\r",
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"// Check if the response indicates forbidden access\r",
+									"pm.test(\"Response indicates forbidden access\", function () {\r",
+									"    pm.expect(jsonData.status).to.equal(\"error\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{user_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userId\": 1,\r\n    \"content\": \"Тестовое уведомление\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/notification",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"notification"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Security",
+			"item": [
+				{
+					"name": "Access Protected Resource Without Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check if the request was unauthorized\r",
+									"pm.test(\"Status code is 403 Unauthorized\", function () {\r",
+									"    pm.response.to.have.status(403);\r",
+									"});\r",
+									"\r",
+									"// Parse the response body\r",
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"// Check if the response indicates unauthorized access\r",
+									"pm.test(\"Response indicates unauthorized access\", function () {\r",
+									"    pm.expect(jsonData.status).to.equal(\"error\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/user/getallusers",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user",
+								"getallusers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Access Admin Resource With User Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check if the request was forbidden\r",
+									"pm.test(\"Status code is 403 Forbidden\", function () {\r",
+									"    pm.response.to.have.status(403);\r",
+									"});\r",
+									"\r",
+									"// Parse the response body\r",
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"// Check if the response indicates forbidden access\r",
+									"pm.test(\"Response indicates forbidden access\", function () {\r",
+									"    pm.expect(jsonData.status).to.equal(\"error\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{user_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/user/getallusers",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user",
+								"getallusers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Access With Invalid Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check if the request was unauthorized\r",
+									"pm.test(\"Status code is 401 Unauthorized\", function () {\r",
+									"    pm.response.to.have.status(401);\r",
+									"});\r",
+									"\r",
+									"// Parse the response body\r",
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"// Check if the response indicates invalid token\r",
+									"pm.test(\"Response indicates invalid token\", function () {\r",
+									"    pm.expect(jsonData.status).to.equal(\"error\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "invalid_token_value",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/auth/me",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"me"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
