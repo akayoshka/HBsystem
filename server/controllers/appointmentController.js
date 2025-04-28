@@ -29,14 +29,14 @@ const getallappointments = asyncHandler(async (req, res) => {
   }
   
   // Если нет параметра поиска, но есть авторизованный пользователь, показываем только его записи
-  else if (userId) {
-    filters = {
-      [Op.or]: [
-        { userId },
-        { doctorId: userId } // Если пользователь также является врачом
-      ]
-    };
-  }
+  // else if (userId) {
+  //   filters = {
+  //     [Op.or]: [
+  //       { userId },
+  //       { doctorId: userId } // Если пользователь также является врачом
+  //     ]
+  //   };
+  // }
   
   // Фильтрация по статусу
   if (status) {
